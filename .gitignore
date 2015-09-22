@@ -42,10 +42,6 @@ Icon
 .Trashes
 
 ### Linux ###
-.*
-!.gitignore
-!.git*
-!.jshint*
 *~
 
 
