@@ -1,9 +1,9 @@
 language: node_js
 
 node_js:
-    - "stable"
-    - "0.12"
-    - "0.11"
+    #- "stable"     # Newer versions run into stack size problems!
+    #- "0.12"       # Newer versions run into stack size problems!
+    #- "0.11"       # Newer versions run into stack size problems!
     - "0.10"
 
 script: npm run-script test-coverage

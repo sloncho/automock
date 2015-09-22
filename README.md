@@ -3,10 +3,10 @@
 A Node.js automatic mocking tool.
 
 [![npm version](https://img.shields.io/npm/v/automock
-.svg)](https://travis-ci.org/JaredReisinger/automock)
-[![build status](https://img.shields.io/travis/JaredReisinger/automock/master.svg)](https://travis-ci.org/JaredReisinger/automock)
-[![code coverage](https://img.shields.io/codecov/c/github/JaredReisinger/automock.svg)](https://travis-ci.org/JaredReisinger/automock)
-[![dependencies](https://img.shields.io/david/JaredReisinger/automock.svg)](https://travis-ci.org/JaredReisinger/automock)
+.svg)](https://travis-ci.org/HBOCodeLabs/automock)
+[![build status](https://img.shields.io/travis/HBOCodeLabs/automock/master.svg)](https://travis-ci.org/HBOCodeLabs/automock)
+[![code coverage](https://img.shields.io/codecov/c/github/HBOCodeLabs/automock.svg)](https://travis-ci.org/HBOCodeLabs/automock)
+[![dependencies](https://img.shields.io/david/HBOCodeLabs/automock.svg)](https://travis-ci.org/HBOCodeLabs/automock)
 
 ---
 
