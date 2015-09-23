@@ -22,8 +22,7 @@ There are some really good unit testing tools like `proxyquire` that can help is
 In order to get access to Node.js module-loading paths, you need to pass the current module's `module` object.
 
 ```javascript
-var automock = require('automock');
-var mocker = new automock.Mocker(module, './thisFile.js');
+var mocker = require('automock').mocker;
 
 var someDependency = mocker.mock('some-dependency');
 
@@ -36,8 +35,8 @@ var someDependency = mocker.mock('some-dependency');
 
 
 ```javascript
-var automock = require('automock');
-var mocker = new automock.Mocker(module, './thisFile.js', spyCreator);
+var mocker = require('automock').mocker;
+mocker.setSpyCreator(spyCreator);
 
 function spyCreator(name) {
     // Spies are named for their dot-notation object path,
@@ -79,7 +78,7 @@ var anotherDependency = mocker.mock('another-dependency', anotherSpyCreator);
 
 ## Caveats
 
-In order to ensure it creates look-alike exports, `automock` has to _actually_ load the dependency it's attempting to mock.  If the act of compiling/loading the module has side-effects, those will happen!  With any luck, though, those should be rare occurrences; modules really shouldn't be written that way, for exactly that reason.
+In order to ensure it creates look-alike exports, `automock` has to _actually_ load the dependency it's attempting to mock.  If the act of compiling/loading the module has side-effects, those will happen!  With any luck, though, those should be rare occurrences; modules really shouldn't be written that way in general, for exactly that reason.
 
 
 ## What's Next?

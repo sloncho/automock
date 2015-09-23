@@ -3,14 +3,14 @@
 var _ = require('underscore');
 _.mixin(require('underscore.string').exports());
 
-var Mocker = require('../../lib/mocker').Mocker;
-
+var Mocker = require('../../lib/mocker');
 
 describe('mocker', function() {
-    var mocker;
     var spies;
+    var mocker;
 
     function spyCreator(name) {
+        // console.log(_.sprintf('<creating spy for "%s()">', name));
         var spy = jasmine.createSpy(name);
         spies.push(spy);
         return spy;
@@ -23,7 +23,8 @@ describe('mocker', function() {
 
     beforeEach(function() {
         spies = [];
-        mocker = new Mocker(module, './mockerSpec', spyCreator);
+        mocker = new Mocker(module);
+        mocker.setSpyCreator(spyCreator);
     });
 
 
