@@ -3,11 +3,11 @@
 var _ = require('underscore');
 _.mixin(require('underscore.string').exports());
 
-var Mocker = require('../../lib/mocker');
+var AutoMock = require('../../lib/automock');
 
-describe('mocker', function() {
+describe('automock', function() {
     var spies;
-    var mocker;
+    var automock;
 
     function spyCreator(name) {
         // console.log(_.sprintf('<creating spy for "%s()">', name));
@@ -23,33 +23,33 @@ describe('mocker', function() {
 
     beforeEach(function() {
         spies = [];
-        mocker = new Mocker(module);
-        mocker.setSpyCreator(spyCreator);
+        automock = new AutoMock(module);
+        automock.setSpyCreator(spyCreator);
     });
 
 
     it('has a mock method', function() {
-        expect(mocker.mock).toBeTruthy();
+        expect(automock.mock).toBeTruthy();
     });
 
     it('can mock simple values', function() {
-        expect(mocker.mockValue(undefined)).toBe(undefined);
-        expect(mocker.mockValue(null)).toBe(null);
-        expect(mocker.mockValue(false)).toBe(false);
-        expect(mocker.mockValue(true)).toBe(true);
-        expect(mocker.mockValue(0)).toBe(0);
-        expect(mocker.mockValue(1)).toBe(1);
-        expect(mocker.mockValue(42)).toBe(42);
-        expect(mocker.mockValue('')).toBe('');
-        expect(mocker.mockValue('hello')).toBe('hello');
-        expect(mocker.mockValue('[]')).toBe('[]');
-        expect(mocker.mockValue('[1, 2, 3]')).toBe('[1, 2, 3]');
-        expect(mocker.mockValue('{}')).toBe('{}');
-        expect(mocker.mockValue('{name:"value"}')).toBe('{name:"value"}');
+        expect(automock.mockValue(undefined)).toBe(undefined);
+        expect(automock.mockValue(null)).toBe(null);
+        expect(automock.mockValue(false)).toBe(false);
+        expect(automock.mockValue(true)).toBe(true);
+        expect(automock.mockValue(0)).toBe(0);
+        expect(automock.mockValue(1)).toBe(1);
+        expect(automock.mockValue(42)).toBe(42);
+        expect(automock.mockValue('')).toBe('');
+        expect(automock.mockValue('hello')).toBe('hello');
+        expect(automock.mockValue('[]')).toBe('[]');
+        expect(automock.mockValue('[1, 2, 3]')).toBe('[1, 2, 3]');
+        expect(automock.mockValue('{}')).toBe('{}');
+        expect(automock.mockValue('{name:"value"}')).toBe('{name:"value"}');
     });
 
     it('can mock a function by creating a spy', function() {
-        var mock = mocker.mockValue(origFunction);
+        var mock = automock.mockValue(origFunction);
 
         expect(mock).not.toBe(origFunction);
         expect(typeof mock).toBe('function');
@@ -64,7 +64,7 @@ describe('mocker', function() {
             prop: origFunction
         };
 
-        var mock = mocker.mockValue(orig);
+        var mock = automock.mockValue(orig);
 
         expect(mock).not.toBe(orig);
         expect(typeof mock).toBe('object');
@@ -81,7 +81,7 @@ describe('mocker', function() {
             get prop() { origFunction(); }
         };
 
-        var mock = mocker.mockValue(orig);
+        var mock = automock.mockValue(orig);
 
         expect(mock).not.toBe(orig);
         expect(typeof mock).toBe('object');
@@ -97,7 +97,7 @@ describe('mocker', function() {
             set prop(val) { origFunction(); }
         };
 
-        var mock = mocker.mockValue(orig);
+        var mock = automock.mockValue(orig);
 
         expect(mock).not.toBe(orig);
         expect(typeof mock).toBe('object');
@@ -125,7 +125,7 @@ describe('mocker', function() {
 
     function checkModuleMocking(moduleName) {
         var real = require(moduleName);
-        var mock = mocker.mock(moduleName);
+        var mock = automock.mock(moduleName);
 
         checkMocking(real, mock);
     }

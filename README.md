@@ -22,9 +22,9 @@ There are some really good unit testing tools like `proxyquire` that can help is
 In order to get access to Node.js module-loading paths, you need to pass the current module's `module` object.
 
 ```javascript
-var mocker = require('automock').mocker;
+var automock = require('automock');
 
-var someDependency = mocker.mock('some-dependency');
+var someDependency = automock.mock('some-dependency');
 
 // `someDependency` should look just like the normal exports
 // from `require('some-dependency')` would, but calling any
@@ -33,10 +33,28 @@ var someDependency = mocker.mock('some-dependency');
 
 #### Customizing stub/spy creation...
 
+```javascript
+var automock = require('automock');
+automock.setSpyCreator(jasmine.createSpy);
+
+var someDependency = automock.mock('some-dependency');
+
+someDependency.someFunction();
+expect(someDependency.someFunction.calls.count).toBe(1);
+```
+
+If you want to control stub/spy creation on a mock-by-mock basis, you can also pass a _spyCreator_ function as the second parameter to the `mock()` call, and it will override the default creator passed to the `automock.setSpyCreator()` function.
+
 
 ```javascript
-var mocker = require('automock').mocker;
-mocker.setSpyCreator(spyCreator);
+var anotherDependency = automock.mock('another-dependency', anotherSpyCreator);
+```
+
+For more advanced behavior, you can customize the spy on a case-by-case basis:
+
+```javascript
+var automock = require('automock');
+automock.setSpyCreator(spyCreator);
 
 function spyCreator(name) {
     // Spies are named for their dot-notation object path,
@@ -61,18 +79,11 @@ function spyCreator(name) {
     return spy;
 }
 
-var someDependency = mocker.mock('some-dependency');
+var someDependency = automock.mock('some-dependency');
 
 someDependency.someFunction();
 expect(someDependency.someFunction.calls.count).toBe(1);
 expect(someDependency.someProperty).toBe(42);
-```
-
-If you want to control stub/spy creation on a mock-by-mock basis, you can also pass a _spyCreator_ function as the second parameter to the `mock()` call, and it will override the default creator passed to the `Mocker` constructor.
-
-
-```javascript
-var anotherDependency = mocker.mock('another-dependency', anotherSpyCreator);
 ```
 
 
