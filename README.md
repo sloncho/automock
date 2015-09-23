@@ -23,7 +23,7 @@ In order to get access to Node.js module-loading paths, you need to pass the cur
 
 ```javascript
 var automock = require('automock');
-var mocker = automock.Mocker(module, './thisFile.js');
+var mocker = new automock.Mocker(module, './thisFile.js');
 
 var someDependency = mocker.mock('some-dependency');
 
@@ -37,7 +37,7 @@ var someDependency = mocker.mock('some-dependency');
 
 ```javascript
 var automock = require('automock');
-var mocker = automock.Mocker(module, './thisFile.js', spyCreator);
+var mocker = new automock.Mocker(module, './thisFile.js', spyCreator);
 
 function spyCreator(name) {
     // Spies are named for their dot-notation object path,
