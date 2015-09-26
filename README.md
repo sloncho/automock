@@ -24,10 +24,9 @@ to pre-define your stubs:
 
 ```javascript
 var automock = require('automock');
+automock.setSpyCreator(jasmine.createSpy);
 
-var myModule = automock.require('../lib/my-module', {
-    spyCreator: jasmine.createSpy,
-});
+var myModule = automock.require('../lib/my-module');
 
 // Write your tests!
 
@@ -46,11 +45,11 @@ dependencies to pass through, you can do so:
 
 ```javascript
 var automock = require('automock');
+automock.setSpyCreator(jasmine.createSpy);
 
 var cryptoMock = /* ... */ ;
 
 var myModule = automock.require('../lib/my-module', {
-    spyCreator: jasmine.createSpy,
     stubs: {
         // If you need manually-created stubs, list them here, using the
         // same format at proxyquire.
