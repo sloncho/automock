@@ -19,7 +19,54 @@ There are some really good unit testing tools like `proxyquire` that can help is
 
 ## Usage
 
-In order to get access to Node.js module-loading paths, you need to pass the current module's `module` object.
+You should be able to use `automock` where you use `proxyquire`, but without needing
+to pre-define your stubs:
+
+```javascript
+var automock = require('automock');
+
+var myModule = automock.require('../lib/my-module', {
+    spyCreator: jasmine.createSpy,
+});
+
+// Write your tests!
+
+describe('my module', function() {
+    
+    it('doIt calls util.format once', function() {
+        myModule.doIt();
+        expect(myModule.__stubs__.util.format).toHaveBeenCalled();
+    });
+
+});
+```
+
+If you do need to manually define stubs, or if you want certain parts of your
+dependencies to pass through, you can do so:
+
+```javascript
+var automock = require('automock');
+
+var cryptoMock = /* ... */ ;
+
+var myModule = automock.require('../lib/my-module', {
+    spyCreator: jasmine.createSpy,
+    stubs: {
+        // If you need manually-created stubs, list them here, using the
+        // same format at proxyquire.
+        'crypto': cryptoMock,
+    },
+    passThru: [
+        // List dependencies you *don't* want mocked here.
+        'util.inspect',
+    ],
+});
+```
+
+
+## Low-level usage
+
+(Further details to-be-written...)
 
 ```javascript
 var automock = require('automock');

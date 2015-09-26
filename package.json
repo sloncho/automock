@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/HBOCodeLabs/automock#readme",
   "dependencies": {
+    "proxyquire": "^1.7.2",
     "underscore": "^1.8.3",
     "underscore.string": "^3.2.2"
   },
