@@ -136,8 +136,3 @@ expect(someDependency.someProperty).toBe(42);
 ## Caveats
 
 In order to ensure it creates look-alike exports, `automock` has to _actually_ load the dependency it's attempting to mock.  If the act of compiling/loading the module has side-effects, those will happen!  With any luck, though, those should be rare occurrences; modules really shouldn't be written that way in general, for exactly that reason.
-
-
-## What's Next?
-
-Implement a `proxyquire`-like loader that can load a module and automatically stub _all_ of it dependencies.  Ideally, it could take a config object (much like `proxyquire` itself does) to indicate hand-crafted mocks, or modules _not_ to mock.
