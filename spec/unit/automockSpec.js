@@ -5,6 +5,7 @@ _.mixin(require('underscore.string').exports());
 
 var AutoMock = require('../../lib/automock');
 
+
 describe('automock', function() {
     var spies;
     var automock;
@@ -106,6 +107,27 @@ describe('automock', function() {
         mock.prop = 'dummy';
         expect(spies.length).toBe(1);
         expect(spies[0].calls.count()).toBe(1);
+    });
+
+    it('can mock a prototype-based class', function() {
+        function Orig() {
+            origFunction();
+        }
+
+        Orig.prototype.fn = function() {
+            origFunction();
+        };
+
+        var mock = automock.mockValue(Orig);
+
+        expect(mock).not.toBe(Orig);
+        expect(typeof mock).toBe('function');
+
+        // calling the mocked function should *not* trigger the failure in origFunction!
+        var mockInstance = new mock();
+        expect(mock.calls.count()).toBe(1);
+        mockInstance.fn();
+        expect(mockInstance.fn.calls.count()).toBe(1);
     });
 
     function checkMocking(orig, mock) {
