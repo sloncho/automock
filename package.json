@@ -4,7 +4,7 @@
   "description": "An automatic mock creator",
   "main": "./index.js",
   "scripts": {
-    "test": "istanbul cover --include-all-sources jasmine --captureExceptions",
+    "test": "istanbul cover -x **/spec/** --include-all-sources jasmine --captureExceptions",
     "test-coverage": "npm run-script test && cat ./coverage/coverage.json | codecov"
   },
   "keywords": [
