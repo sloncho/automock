@@ -24,21 +24,42 @@ exports with all functionality stubbed out.
 ## Usage
 
 You should be able to use `automock.require()` anywhere you would use `proxyquire()`,
-but without necessarily needing to pre-define your stubs:
+but without necessarily needing to pre-define your stubs.  For example, here's
+automock with the corresponding proxyquire lines/references commented out:
 
 ```javascript
+// var proxyquire = require('proxyquire');
 var automock = require('automock');
+
+// var mockUtil = jasmine.createSpyObj('util', ['format']);
+// var mockOther = jasmine.createSpyObj('other-package', ['fn1', 'fn2', 'fn3']);
 automock.setStubCreator(jasmine.createSpy);
 
+// var myModule = proxyquire('../lib/my-module', {
+//     'util': mockUtil,
+//     'other-package': mockOther,
+// });
 var myModule = automock.require('../lib/my-module');
 
 describe('my module', function() {
 
     it('doIt calls util.format once', function() {
         myModule.doIt();
+
+        // expect(mockUtil.format.calls.count()).toBe(1);
         expect(myModule.__stubs__.util.format.calls.count()).toBe(1);
     });
 
+    it('doOther calls other-package functions', function() {
+        myModule.doOther();
+
+        // expect(mockOther.fn1.calls.count()).toBe(1);
+        // expect(mockOther.fn2.calls.count()).toBe(1);
+        // expect(mockOther.fn3.calls.count()).toBe(1);
+        expect(myModule.__stubs__['other-package'].fn1.calls.count()).toBe(1);
+        expect(myModule.__stubs__['other-package'].fn2.calls.count()).toBe(1);
+        expect(myModule.__stubs__['other-package'].fn3.calls.count()).toBe(1);
+    });
 });
 ```
 
