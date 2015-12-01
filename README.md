@@ -23,7 +23,7 @@ Automock atuomatically creates mock objects for dependencies by requiring them a
 Automock is designed to make unit testing easier and more reliable. It helps experienced developers get more out of their tests. This documentation assumes that you have a certain level of knowledge and experience with unit testing in JavaScript and Node.js, and that you are familiar with proxyquire and Jasmine, or similar unit testing tools.
 
 ## Usage ##
-You can use automock in two basic ways:
+You can use automock in three basic ways:
 
 -   [To automatically generate all mock objects](#to-automatically-generate-all-mock-objects)
 -   [To selectively auto-generate some mock objects](#to-selectively-auto-generate-some-mock-objects)
@@ -32,7 +32,6 @@ You can use automock in two basic ways:
 You should generally be able to use `automock.require()` anywhere you 
 would use `proxyquire()`, but without needing to pre-define your stubs.
 
-<a id="to-automatically-generate-all-mock-objects"></a>
 ### To automatically generate all mock objects ###
 
 You can have automock create a mock object with all of the original's functionality mocked for you. The following example demonstrates the process for two simple dependencies using Jasmine. Each automock call is preceded by comments showing the equivalent calls when using proxyquire for manual definition.
@@ -85,8 +84,8 @@ The basic procedure for using automock is demonstrated in the example:
 3)  Access the stubs in your mock object, using its `__stubs__` member.
 
 
-<a id="to-selectively-auto-generate-some-mock-objects"></a>
-### To selectively auto-generate some mock objects
+
+### To selectively auto-generate some mock objects ###
 
 You can manually define stubs, or your can have automock skip certain parts of a dependency altogether (letting them "pass through"). 
 If you do need to manually define stubs, or if you want certain parts 
@@ -150,41 +149,9 @@ describe('my module', function() {
 });
 ```
 
-## Low-level usage ##
+### To customize automtically generated mock objects ###
 
-Occasionally, you may want to create a "just-in-time" mock of a particular
-dependency or object.  You can do this using the `automock.mockModule()` and
-`automock.mockValue()` functions.
-
-```javascript
-var automock = require('automock');
-
-var someDependency = automock.mockModule('some-dependency');
-// `someDependency` now looks just like the normal exports from
-// `require('some-dependency')` would, but any functions are stubbed out.
-// This is effectively what you get for `some-dependency` when it's a
-// dependency inside of a module you've called `automock.require()` on.
-
-var someDynamicallyCreatedObject = /* ... something returned from an API ... */ ;
-
-var mockedObject = automock.mockValue(someDynamicallyCreatedObject);
-// `mockedObject` now looks just like `someDynamicallyCreatedObject`, but any
-// function properties (even nested ones!) are stubbed out.
-```
-
-## Choosing a stub creator ##
-
-To have automock make mock objects for you, you need to tell it what stub creator to use. You can use a creator function from a published package, like `jasmine.createSpy`, which is used in the examples given in this document, or you can use a custom function.
-
-Whatever stub creator you use, it must take the path of the function as its input parameter, and it must return the stub function. You may use a creator that provides additional functionality, such as generating "spy" stubs that track calls or add other functionality.
-
-The principle of automock is, "use what you're using." You should be able to use whatever stub creator you are already familiar with.
-
-## Making a custom stub creator ##
-
-You can create your own stub creator function to use with automock. As with using an existing stub creator, you'll need to accept the name (and path) of the function to be stubbed as the input parameter. Your function must return the function stub.
-
-The following example shows a custom stub creator that uses `jasmine.createSpy` to generate stubs and then performs special instructions for two of the stubs. You don't have to rely on an existing package, like Jasmine to do the basic stubbing, but doing so will be simpler than impleenting your own stubbing logic.
+You can customize what happens when a stub is automaticaaly created by your chosen creator function. The following example demonstrates the process.
 
 ```javascript
 var automock = require('automock');
@@ -233,4 +200,53 @@ describe('my module', function() {
 });
 ```
 
+You can capture some or all of the functions in the dependency with the `switch` statement, but you should always include a `default` case that simply passes the name on to the stub generator.
+
+## Low-level usage ##
+
+Occasionally, you may want to create a "just-in-time" mock of a particular
+dependency or object.  You can do this using the `automock.mockModule()` and
+`automock.mockValue()` functions.
+
+```javascript
+var automock = require('automock');
+
+var someDependency = automock.mockModule('some-dependency');
+// `someDependency` now looks just like the normal exports from
+// `require('some-dependency')` would, but any functions are stubbed out.
+// This is effectively what you get for `some-dependency` when it's a
+// dependency inside of a module you've called `automock.require()` on.
+
+var someDynamicallyCreatedObject = /* ... something returned from an API ... */ ;
+
+var mockedObject = automock.mockValue(someDynamicallyCreatedObject);
+// `mockedObject` now looks just like `someDynamicallyCreatedObject`, but any
+// function properties (even nested ones!) are stubbed out.
+```
+
+## Choosing a stub creator ##
+
+To have automock make mock objects for you, you need to tell it what 
+stub creator to use. You can use a creator function from a published 
+package, like `jasmine.createSpy`, which is used in the examples given 
+in this document, or you can use a custom function.
+
+Whatever stub creator you use, it must take the path of the function 
+as its input parameter, and it must return the stub function. You may 
+use a creator that provides additional functionality, such as 
+generating "spy" stubs that track calls or add other functionality.
+
+The principle of automock is, "use what you're using." You should be 
+able to use whatever stub creator you are already familiar with.
+
+## Making a custom stub creator ##
+
+You can create your own stub creator function to use with automock. As 
+with using an existing stub creator, you'll need to accept the name 
+(and path) of the function to be stubbed as the input parameter. Your 
+function must return the function stub.
+
+One way to customize stub creation is to add functionality to the 
+stubs returned by an existing stub generator, as discussed in 
+[To customize automtically generated mock objects](#to-customize-automatically-generated-mock-objects).
 
