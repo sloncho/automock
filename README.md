@@ -1,6 +1,6 @@
 # automock
 
-A Node.js automatic mocking tool.
+A Node.js mock object creation tool for unit testing.
 
 [![npm version](https://img.shields.io/npm/v/automock
 .svg)](https://www.npmjs.com/packages/automock)
@@ -12,20 +12,30 @@ A Node.js automatic mocking tool.
 
 ## Overview
 
-There are some really good unit testing tools like `proxyquire` that can help
-isolate your code from external dependencies.  The only downside is that you have
-to implement any mocked dependencies yourself.  Further, it's very easy to use a
-partially-mocked implementation which breaks when the dependency itself changes.
+Automock is a utility for unit testing. It automatically creates mock objects for your dependencies, so that you can isolate the code you're testing from your dependencies wihtout having to mock up objects yourself. If you're familiar with [proxyquire](https://www.npmjs.com/package/proxyquire) automock should be easy to learn. 
 
-`automock` attempts to solve these problems by automatically creating lookalike
-exports with all functionality stubbed out.
+Automock atuomatically creates mock objects for dependencies by requiring them and then using the resulting exports to create the benign mock objects for your test. That process spares you the need to carefully stub out each function in the object manually. It also means that you don't have to worry about changing your mocked objects whenever your dependencies change&mdash;automock faithfully represents the current state of your dependencies in its mock objects automatically.
 
+**Important**&nbsp;&nbsp;&nbsp;In order to create its mock objects, automock actually loads the dependencies you specify. That means that any side-effects of loading the required module will happen. You shouldn't generally encounter any problems from this though, because modules should not be written to cause side-effects during loading. However, it's important to remember that everything is getting loaded, particularly if you encounter some unexpected behavior in your tests.
 
-## Usage
+## Asumptions ##
 
-You should be able to use `automock.require()` anywhere you would use `proxyquire()`,
-but without necessarily needing to pre-define your stubs.  For example, here's
-automock with the corresponding proxyquire lines/references commented out:
+Automock is designed to make unit testing easier and more reliable. It helps experienced developers get more out of their tests. This documentation assumes that you have a certain level of knowledge and experience with unit testing in JavaScript and Node.js, and that you are familiar with proxyquire and Jasmine, or similar unit testing tools.
+
+## Usage ##
+You can use automock in two basic ways:
+
+-   [To automatically generate all mock objects](#to-automatically-generate-all-mock-objects)
+-   [To selectively auto-generate some mock objects](#to-selectively-auto-generate-some-mock-objects)
+-   [To customize automtically generated mock objects](#to-customize-automatically-generated-mock-objects)
+
+You should generally be able to use `automock.require()` anywhere you 
+would use `proxyquire()`, but without needing to pre-define your stubs.
+
+<a id="to-automatically-generate-all-mock-objects"></a>
+### To automatically generate all mock objects ###
+
+You can have automock create a mock object with all of the original's functionality mocked for you. The following example demonstrates the process for two simple dependencies using Jasmine. Each automock call is preceded by comments showing the equivalent calls when using proxyquire for manual definition.
 
 ```javascript
 // var proxyquire = require('proxyquire');
@@ -63,8 +73,24 @@ describe('my module', function() {
 });
 ```
 
-If you do need to manually define stubs, or if you want certain parts of your
-dependencies to pass through, you can do so:
+The basic procedure for using automock is demonstrated in the example:
+
+1)  Call `setStubCreator`, passing the function that you want to use 
+    to create stubs for your mock objects. In the example, we used 
+    `jasmine.createSpy`, but you can use others. See 
+    [Choosing a stub creator](#choosing-a-stub-creator) for more information.
+2)  Generate the mock object for each dependency by calling 
+    `automock.require` once for each, passing the path to the module 
+    as the input parameter.
+3)  Access the stubs in your mock object, using its `__stubs__` member.
+
+
+<a id="to-selectively-auto-generate-some-mock-objects"></a>
+### To selectively auto-generate some mock objects
+
+You can manually define stubs, or your can have automock skip certain parts of a dependency altogether (letting them "pass through"). 
+If you do need to manually define stubs, or if you want certain parts 
+of your dependencies to pass through, you can do so:
 
 ```javascript
 var automock = require('automock');
@@ -74,8 +100,8 @@ var cryptoMock = /* ... hand-crafted mock of Node's 'crypto' module ... */ ;
 
 var myModule = automock.require('../lib/my-module', {
     stubs: {
-        // If you need manually-created stubs, list them here, using the
-        // same format as `proxyquire`.
+        // If you need manually-created stubs, list them here, using 
+        //  the same format as `proxyquire`.
         'crypto': cryptoMock,
     },
     passThru: [
@@ -85,58 +111,11 @@ var myModule = automock.require('../lib/my-module', {
 });
 ```
 
-In this case, `crypto` is replaced by your hand-crafted stub, the actual
+In this case, `crypto` is replaced by your hand-crafted stub, the actual 
 `util.inspect` module is left unmocked, and any other dependencies are automatically
 stubbed out (using `jasmine.createSpy` in this example).
 
-Finally, if you want to customize the automatically created stubs you can do so
-in the `stubCreator` function:
 
-```javascript
-var automock = require('automock');
-automock.setStubCreator(spyCreator);
-
-function spyCreator(name) {
-    // Stubs are named for their dot-notation object path, starting with the
-    // module name.  Get/Set properties have "__get__" or "__set__" as the
-    // last part of their name.
-    var spy;
-
-    switch (name) {
-        case 'some-dependency.someFunction':
-            spy = jasmine.createSpy(name).and.callFake(function() {
-                // do something special!
-            });
-            break;
-
-        case 'some-dependency.someProperty.__get__':
-            spy = jasmine.createSpy(name).and.returnValue(42);
-            break;
-
-        default:
-            spy = jasmine.createSpy(name);
-    }
-
-    return spy;
-}
-
-// Assume `my-module` has a `require('some-dependency')` statement!
-var myModule = automock.require('../lib/my-module');
-
-describe('my module', function() {
-
-    it('calls someFunction', function() {
-        myModule.callsSomeFunction();
-        expect(myModule.__stubs__['some-dependency'].someFunction.calls.count()).toBe(1);
-    });
-
-    it('gets someProperty', function() {
-        var prop = myModule.getsSomeProperty();
-        expect(prop).toBe(42);
-    });
-
-});
-```
 
 Or, if your stubs can handle modification after-the-fact,
 as jasmine's do, you can modify them _after_ they are created, since they are
@@ -171,8 +150,7 @@ describe('my module', function() {
 });
 ```
 
-
-## Low-level usage
+## Low-level usage ##
 
 Occasionally, you may want to create a "just-in-time" mock of a particular
 dependency or object.  You can do this using the `automock.mockModule()` and
@@ -194,11 +172,65 @@ var mockedObject = automock.mockValue(someDynamicallyCreatedObject);
 // function properties (even nested ones!) are stubbed out.
 ```
 
+## Choosing a stub creator ##
 
-## Caveats
+To have automock make mock objects for you, you need to tell it what stub creator to use. You can use a creator function from a published package, like `jasmine.createSpy`, which is used in the examples given in this document, or you can use a custom function.
 
-In order to ensure it creates look-alike exports, `automock` has to _actually_
-load the dependency it's attempting to mock.  If the act of compiling/loading the
-module has side-effects, those will happen!  With any luck, though, those should
-be rare occurrences; modules really shouldn't be written that way in general, for
-exactly that reason.
+Whatever stub creator you use, it must take the path of the function as its input parameter, and it must return the stub function. You may use a creator that provides additional functionality, such as generating "spy" stubs that track calls or add other functionality.
+
+The principle of automock is, "use what you're using." You should be able to use whatever stub creator you are already familiar with.
+
+## Making a custom stub creator ##
+
+You can create your own stub creator function to use with automock. As with using an existing stub creator, you'll need to accept the name (and path) of the function to be stubbed as the input parameter. Your function must return the function stub.
+
+The following example shows a custom stub creator that uses `jasmine.createSpy` to generate stubs and then performs special instructions for two of the stubs. You don't have to rely on an existing package, like Jasmine to do the basic stubbing, but doing so will be simpler than impleenting your own stubbing logic.
+
+```javascript
+var automock = require('automock');
+automock.setStubCreator(spyCreator);
+
+function spyCreator(name) {
+    // Stubs are named for their dot-notation object path, starting 
+    //  with the module name.
+    // Get/Set properties have "__get__" or "__set__" as the last part 
+    //  of their name.
+    var spy;
+
+    switch (name) {
+        case 'some-dependency.someFunction':
+            spy = jasmine.createSpy(name).and.callFake(function() {
+                // do something special!
+            });
+            break;
+
+        case 'some-dependency.someProperty.__get__':
+            spy = jasmine.createSpy(name).and.returnValue(42);
+            break;
+
+        default:
+            spy = jasmine.createSpy(name);
+    }
+
+    return spy;
+}
+
+// Assume `my-module` has a `require('some-dependency')` statement.
+var myModule = automock.require('../lib/my-module');
+
+describe('my module', function() {
+
+    it('calls someFunction', function() {
+        myModule.callsSomeFunction();
+        expect(myModule.__stubs__['some-dependency'].someFunction.calls.count()).toBe(1);
+    });
+
+    it('gets someProperty', function() {
+        var prop = myModule.getsSomeProperty();
+        expect(prop).toBe(42);
+    });
+
+});
+```
+
+
