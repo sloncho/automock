@@ -27,7 +27,7 @@ You can use automock in three basic ways:
 
 -   [To automatically generate all mock objects](#to-automatically-generate-all-mock-objects)
 -   [To selectively auto-generate some mock objects](#to-selectively-auto-generate-some-mock-objects)
--   [To customize automtically generated mock objects](#to-customize-automatically-generated-mock-objects)
+-   [To customize automatically generated mock objects](#to-customize-automatically-generated-mock-objects)
 
 You should generally be able to use `automock.require()` anywhere you 
 would use `proxyquire()`, but without needing to pre-define your stubs.
@@ -74,16 +74,14 @@ describe('my module', function() {
 
 The basic procedure for using automock is demonstrated in the example:
 
-1)  Call `setStubCreator`, passing the function that you want to use 
+1.  Call `setStubCreator`, passing the function that you want to use 
     to create stubs for your mock objects. In the example, we used 
     `jasmine.createSpy`, but you can use others. See 
     [Choosing a stub creator](#choosing-a-stub-creator) for more information.
-2)  Generate the mock object for each dependency by calling 
+2.  Generate the mock object for each dependency by calling 
     `automock.require` once for each, passing the path to the module 
     as the input parameter.
-3)  Access the stubs in your mock object, using its `__stubs__` member.
-
-
+3.  Access the stubs in your mock object, using its `__stubs__` member.
 
 ### To selectively auto-generate some mock objects ###
 
@@ -149,7 +147,7 @@ describe('my module', function() {
 });
 ```
 
-### To customize automtically generated mock objects ###
+### To customize automatically generated mock objects ###
 
 You can customize what happens when a stub is automaticaaly created by your chosen creator function. The following example demonstrates the process.
 
