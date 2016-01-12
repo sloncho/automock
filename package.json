@@ -1,6 +1,6 @@
 {
   "name": "automock",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An automatic mock creator",
   "main": "./index.js",
   "scripts": {
