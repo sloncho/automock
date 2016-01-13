@@ -11,13 +11,13 @@ A Node.js mock object creation tool for unit testing.
 
 ## Overview
 
-Automock is a utility for unit testing. It automatically creates mock objects for your dependencies, so that you can isolate the code you're testing from your dependencies wihtout having to mock up objects yourself. If you're familiar with [proxyquire](https://www.npmjs.com/package/proxyquire) automock should be easy to learn.
+Automock is a utility for unit testing. It automatically creates mock objects for your dependencies, so that you can isolate the code you're testing from your dependencies without having to mock up objects yourself. If you're familiar with [proxyquire](https://www.npmjs.com/package/proxyquire), automock should be easy to learn.
 
-Automock atuomatically creates mock objects for dependencies by requiring them and then using the resulting exports to create the benign mock objects for your test. That process spares you the need to carefully stub out each function in the object manually. It also means that you don't have to worry about changing your mocked objects whenever your dependencies change&mdash;automock faithfully represents the current state of your dependencies in its mock objects automatically.
+Automock atuomatically creates mock objects for dependencies by requiring them and then using the resulting exports to create the benign mock objects for your test. That process spares you the need to carefully stub out each function in the object manually. It also means that you don't have to worry about changing your mocked objects whenever your dependencies change&mdash;automock automatically represents the current state of your dependencies in its mock objects.
 
-**Important**&nbsp;&nbsp;&nbsp;In order to create its mock objects, automock actually loads the dependencies you specify. That means that any side-effects of loading the required module will happen. You shouldn't generally encounter any problems from this though, because modules should not be written to cause side-effects during loading. However, it's important to remember that everything is getting loaded, particularly if you encounter some unexpected behavior in your tests.
+**Important**&nbsp;&nbsp;&nbsp;In order to create its mock objects, automock loads the dependencies you specify. That means that any side-effects of loading the required module will occur. You shouldn't generally encounter any problems from this, however, because modules should not be written to cause side-effects during loading. However, it's important to remember that everything is getting loaded, particularly if you encounter some unexpected behavior in your tests.
 
-## Asumptions ##
+## Assumptions ##
 
 Automock is designed to make unit testing easier and more reliable. It helps experienced developers get more out of their tests. This documentation assumes that you have a certain level of knowledge and experience with unit testing in JavaScript and Node.js, and that you are familiar with proxyquire and Jasmine, or similar unit testing tools.
 
@@ -29,7 +29,7 @@ You can use automock in three basic ways:
 -   [To customize automatically generated mock objects](#to-customize-automatically-generated-mock-objects)
 
 You should generally be able to use `automock.require()` anywhere you
-would use `proxyquire()`, but without needing to pre-define your stubs.
+would use `proxyquire()`, but without needing to predefine your stubs.
 
 ### To automatically generate all mock objects ###
 
@@ -111,10 +111,8 @@ In this case, `crypto` is replaced by your hand-crafted stub, the actual
 `util.inspect` module is left unmocked, and any other dependencies are automatically
 stubbed out (using `jasmine.createSpy` in this example).
 
-
-
 Or, if your stubs can handle modification after-the-fact,
-as jasmine's do, you can modify them _after_ they are created, since they are
+as Jasmine's do, you can modify them _after_ they are created, since they are
 passed back via the required module's `__stubs__` property:
 
 ```javascript
