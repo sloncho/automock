@@ -11,7 +11,7 @@ var proxyquire = require('proxyquire');
 
 
 var MockModule = {
-    _resolveFilename: jasmine.createSpy('_resolveFilename').and.returnValue('dummy'), 
+    _resolveFilename: jasmine.createSpy('_resolveFilename').and.returnValue('dummy'),
 };
 
 // How meta can we get?  We're using proxyquire to stub out proxyquire in the
@@ -39,7 +39,7 @@ var ProxyquireWrapper = proxyquire('../../lib/proxyquire-wrapper', stubs);
 
 describe('proxyquire-wrapper', function() {
     var wrapper;
-    
+
     beforeEach(function() {
         MockProxyquire.calls.reset();
         MockProxyquire.prototype.load.calls.reset();
@@ -55,7 +55,7 @@ describe('proxyquire-wrapper', function() {
 
     describe('load', function() {
         var dummy;
-        
+
         beforeEach(function() {
             dummy = wrapper.load('./dummy', {}, {});
         });
@@ -73,7 +73,7 @@ describe('proxyquire-wrapper', function() {
         });
 
     });
-    
+
     describe('_require', function() {
         function callWrapperRequire() {
             wrapper._require({ filename: 'dummy' }, {}, 'dummy');
@@ -84,25 +84,31 @@ describe('proxyquire-wrapper', function() {
             wrapper._stubs = {};
             wrapper._params = {};
             wrapper._primaryModuleFile = 'dummy';
-            
+
             mockAutomock.mockValue.calls.reset();
         });
-        
+
         it('calls through to Proxyquire\'s _require', function() {
             var result = callWrapperRequire();
-            expect(MockProxyquire.prototype._require.calls.count()).toBe(1);            
+            expect(MockProxyquire.prototype._require.calls.count()).toBe(1);
         });
-                
+
         it('does not mock for dependecies of a non-primary module', function() {
             wrapper._primaryModuleFile = 'not-dummy';
             var result = callWrapperRequire();
             expect(mockAutomock.mockValue.calls.count()).toBe(0);
         });
-        
+
         it('does mock for dependecies of the primary module', function() {
             var result = callWrapperRequire();
             expect(mockAutomock.mockValue.calls.count()).toBe(1);
         });
+
+        it('does not mock for dependencies in passThru', function() {
+            wrapper._params = {passThru: ['dummy']};
+            var result = callWrapperRequire();
+            expect(mockAutomock.mockValue.calls.count()).toBe(0);
+        })
     });
 
 });
