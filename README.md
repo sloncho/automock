@@ -103,13 +103,14 @@ var myModule = automock.require('../lib/my-module', {
     passThru: [
         // List any dependencies you *don't* want mocked here.
         'util.inspect',
+        'lodash',
     ],
 });
 ```
 
-In this case, `crypto` is replaced by your hand-crafted stub, the actual
-`util.inspect` module is left unmocked, and any other dependencies are automatically
-stubbed out (using `jasmine.createSpy` in this example).
+In this case, `crypto` is replaced by your hand-crafted stub, the actual `lodash`
+module and `util.inspect` property are left unmocked, and any other dependencies
+are automatically stubbed out (using `jasmine.createSpy` in this example).
 
 Or, if your stubs can handle modification after-the-fact,
 as Jasmine's do, you can modify them _after_ they are created, since they are
