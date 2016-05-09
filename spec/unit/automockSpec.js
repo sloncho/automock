@@ -2,6 +2,7 @@
 
 var _ = require('underscore');
 _.mixin(require('underscore.string').exports());
+var sprintf = require('sprintf-js').sprintf;
 
 var proxyquire = require('proxyquire');
 
@@ -219,7 +220,7 @@ describe('automock', function() {
     ];
 
     standardModules.forEach(function(moduleName) {
-        it(_.sprintf('properly mocks %s', moduleName), function() {
+        it(sprintf('properly mocks %s', moduleName), function() {
             checkModuleMocking(moduleName);
         });
 
